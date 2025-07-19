@@ -1,10 +1,16 @@
 import express from "express";
 import dotenv from "dotenv";
 import OpenAI from "openai";
+import cors from "cors"; // 👈 Importamos cors
 
 dotenv.config();
 
 const app = express();
+
+// Habilita CORS para todas las rutas
+app.use(cors()); // 👈 Usa cors como middleware
+
+// Middleware para parsear JSON
 app.use(express.json());
 
 const openai = new OpenAI({
