@@ -41,6 +41,33 @@ app.post("/chat", async (req, res) => {
   }
 });
 
+// Ruta pública para el robot de cron-job.org
+app.get("/ping", (req, res) => {
+  // 1. Configuramos los headers y respondemos de inmediato
+  res.status(200).setHeader("Content-Type", "text/plain");
+  res.write("Despertando el servidor del Chatbot de IA... 🤖\n");
+
+  let ciclos = 0;
+  
+  // 2. Un intervalo que se ejecuta cada 10 segundos (10000 ms)
+  const intervalId = setInterval(() => {
+    ciclos++;
+    res.write(`Calentando motores de IA... ciclo ${ciclos}\n`);
+    
+    // 3. Cuando llegamos a 6 ciclos (60 segundos en total), cerramos la conexión
+    if (ciclos >= 6) {
+      clearInterval(intervalId);
+      res.end("El servidor de IA está 100% operativo y listo. 🚀");
+    }
+  }, 10000);
+  
+  // IMPORTANTE: Si el cliente (cron-job) cancela la petición antes de tiempo,
+  // limpiamos el intervalo para no dejar procesos fantasma consumiendo memoria.
+  req.on('close', () => {
+    clearInterval(intervalId);
+  });
+});
+
 // Iniciar el servidor
 const PORT = process.env.PORT || 3000;
 app.listen(PORT, () => {
